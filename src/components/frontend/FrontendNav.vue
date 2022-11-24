@@ -41,28 +41,59 @@
 							>Home</router-link
 						>
 					</li>
-					<li>
+					<li  @click="toggleDropdownMenu()">
 						<router-link
 							to="/features"
-							class="transition-colors duration-200 text-gray-100 md:text-black hover:text-emerald-700 dark:text-white"
-							>Features</router-link
-						>
+							class="
+							transition-colors 
+							duration-200
+							text-gray-100
+							md:text-black
+						    hover:text-emerald-700
+							dark:text-white							
+							"
+							>Features</router-link>
+
+							<!-- Submenu -->
+							<ul 
+							v-show = "show_submenu" 
+							ref="target"
+							class="
+							md:absolute							 md:bg-white 
+							 w-48 mt-2 
+							 rounded-md 
+							 md:text-start 
+							 shadow-lg ring-1
+							  ring-black 
+							  ring-opacity-5
+							  mx-auto
+							  bg-emerald-600">
+								<li>
+									<a class="md:text-black block px-4 py-2 md:hover:bg-gray-100" href="#Incredible">Incredible</a>
+								</li>
+								<li>
+									<a  class="md:text-black block px-4 py-2 md:hover:bg-gray-100"   href="#Incredible">Fantastic</a>
+								</li>
+								<li>
+									<a  class="md:text-black block px-4 py-2 md:hover:bg-gray-100"   href="#Intelligent">Intelligent</a>
+								</li>
+							</ul>
 					</li>
-					<li>
+					<li @click ="show_submenu=false">
 						<router-link
 							to="/services"
 							class="transition-colors duration-200  text-gray-100 md:text-black hover:text-emerald-700 dark:text-white"
 							>Services</router-link
 						>
 					</li>
-					<li>
+					<li @click ="show_submenu=false">
 						<router-link
 							to="/testimonials"
 							class="transition-colors duration-200 text-gray-100 md:text-black hover:text-emerald-700 dark:text-white"
 							>Testimoials</router-link
 						>
 					</li>
-					<li>
+					<li @click ="show_submenu=false">
 						<router-link
 							to="/contact"
 							class="transition-colors duration-200 text-gray-100 md:text-black hover:text-emerald-700 dark:text-white"
@@ -74,7 +105,7 @@
 							<button
 								class="bg-emerald-600 hover:bg-emerald-700 transition-colors duration-300 py-2.5 px-2.5 rounded-lg text-white font-semibold  dark:text-white"
 							>
-								Get Started
+								Get Started ({{ count }})
 							</button>
 						</router-link>
 					</li>
@@ -83,6 +114,7 @@
 					</li>
 				</ul>
 			</div>
+			
 		</div>
 	</header>
 	<!-- End Header -->
@@ -91,12 +123,36 @@
 <script setup lang="ts">
 	// Toglge menu hamberger
 import { ref } from 'vue'
-import { useDark, useToggle } from '@vueuse/core'
+import { useDark, useToggle, onClickOutside } from '@vueuse/core'
 
+// สำหรับส่งค่าผ่าน Store จากหน้าอื่นให้ใช้ตัวแปรรวมกันก็ใช้ค่า storeToRefs แต่ถ้าเอา method มาด้วยต้องใส่ mapActions
+// Import counter.ts
+import { useCounterStore } from '../../store/counter'
+
+import { storeToRefs } from 'pinia'
+const store = useCounterStore()
+const { count, doubleCount } = storeToRefs(store)
+
+// Toggle menu const for Hamberger menu
 const showMenu = ref(false)
+
+
+// Sub-menu
+const show_submenu = ref(false)
+// Method Toggle dropdown menu
+const toggleDropdownMenu = () => show_submenu.value = !show_submenu.value
 
 //method Toggle Menu
 const toggleMenu = () => { showMenu.value = !showMenu.value }
+
+// Hide Dropdown Menu when click outside
+const target = ref(null)
+
+onClickOutside(target, (event) => {
+	// console.log(event)
+	show_submenu.value = false
+})  
+
 
 const isDark = useDark()
 const toggleDark = useToggle(isDark)
